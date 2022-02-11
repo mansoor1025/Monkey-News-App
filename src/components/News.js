@@ -22,11 +22,14 @@ export class News extends Component {
     }
 
     updated_news = async () => {
-        let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=347e588256664af2bd85044052e2d821`;
+        this.props.set_progress(45)
+        let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=${this.props.api_key}`;
         let data = await fetch(url);
         let parseData = await data.json();
+        this.props.set_progress(70)
         this.setState({ articles: this.state.articles.concat(parseData.articles), totalResults: parseData.totalResults, loading: false });
         document.title = `${this.capitalize(this.props.category)} News-App`
+        this.props.set_progress(100)
     }
 
     async componentDidMount() {
@@ -38,16 +41,7 @@ export class News extends Component {
     };
 
     render() {
-        let handleNext = async () => {
-            this.setState({ page: this.state.page + 1 });
-            this.updated_news()
-        }
-
-        let handlePrev = async () => {
-            this.setState({ page: this.state.page - 1 });
-            this.updated_news()
-        }
-
+        
         return <InfiniteScroll
             dataLength={this.state.articles.length}
             next={this.fetchMoreData}
